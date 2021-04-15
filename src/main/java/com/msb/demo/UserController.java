@@ -1,11 +1,8 @@
 package com.msb.demo;
 
-import com.msb.jsonboot.annotation.GetMapping;
-import com.msb.jsonboot.annotation.PostMapping;
-import com.msb.jsonboot.annotation.RequestParam;
-import com.msb.jsonboot.annotation.RestController;
+import com.msb.jsonboot.annotation.*;
 
-@RestController(value = "/user")
+@NewController(value = "/user")
 public class UserController {
 
     @GetMapping("/hello")

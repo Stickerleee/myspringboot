@@ -4,6 +4,9 @@ import java.io.PrintStream;
 
 /**
  * Banner接口 用于控制台打印 使用接口方便以后拓展参数打印
+ * 
+ * @author Stickerleee
+ * @since 上午9:33:09
  */
 
 public interface Banner {

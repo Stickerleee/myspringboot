@@ -12,8 +12,9 @@ import io.netty.handler.codec.http.FullHttpRequest;
 
 /**
  * 处理POST请求
- * @author Administrator
- *
+ * 
+ * @author Stickerleee
+ * @since 上午9:31:09
  */
 public class PostRequestHandler implements RequestHandler {
 

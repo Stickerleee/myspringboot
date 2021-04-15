@@ -7,15 +7,17 @@ import com.msb.jsonboot.server.HttpServer;
 
 /**
  * jsonboot 启动类
- *
+ * 
+ * @author Stickerleee
+ * @since 上午9:31:24
  */
 
 public class JsonBootApplication {
 	public static void main(String[] args) {
 		Banner banner = new JsonBootBanner();
 		banner.printBanner(null, System.out);
-//		Route route = new Route();
-//		route.loadRoutes("com.msb.demo");
+		Route route = new Route();
+		route.loadRoutes("com.msb.demo");
 		HttpServer httpServer = new HttpServer();
 		httpServer.run();
 	}
