@@ -1,14 +1,27 @@
 package com.msb.jsonboot.handler.impl;
 
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.StringUtils;
 
+import com.msb.jsonboot.core.context.ApplicationContext;
+import com.msb.jsonboot.core.resolver.ParameterResolver;
+import com.msb.jsonboot.core.resolver.factory.ParameterResolverFactory;
+import com.msb.jsonboot.entity.MethodDetail;
+import com.msb.jsonboot.utils.ReflectionUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msb.jsonboot.handler.RequestHandler;
+import com.msb.jsonboot.utils.UrlUtils;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
+import io.netty.handler.codec.http.QueryStringDecoder;
 
 /**
  * 处理POST请求
@@ -27,28 +40,47 @@ public class PostRequestHandler implements RequestHandler {
      * json的内容格式
      */
     private static final String APPLICATION_JSON = "application/json";
-
+    
     /**
-     * 转换格式
+     * 表单的内容格式  之后补充
      */
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String FORM_URLENCODED= "application/x-www-form-urlencoded";
+
     @Override
     public Object handler(FullHttpRequest fullHttpRequest) {
-        Object result = null;
-        String contentTypeStr = fullHttpRequest.headers().get(CONTENT_TYPE);
-        if (StringUtils.isBlank(contentTypeStr)){
-            return result;
-        }
-        String contentType = contentTypeStr.split(";")[0];
-        if (StringUtils.equals(APPLICATION_JSON, contentType)){
-            String jsonContent = fullHttpRequest.content().toString(Charsets.toCharset(CharEncoding.UTF_8));
-            try {
-                result = objectMapper.readValue(jsonContent, Object.class);
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
+    	
+    	 QueryStringDecoder queryDecoder = new QueryStringDecoder(fullHttpRequest.uri(), Charsets.toCharset(CharEncoding.UTF_8));
+         //获取POST请求体中的参数列表
+         Map<String, String> queryParamMap = UrlUtils.getQueryParam(queryDecoder);
+         String path = queryDecoder.path();
+         //根据映射决定参数列表的处理方法
+         ApplicationContext applicationContext = ApplicationContext.getInstance();
+         MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.POST);
+         if (methodDetail == null || methodDetail.getMethod() == null){
+             return null;
+         }
+         methodDetail.setQueryParameterMappings(queryParamMap);
+         Parameter[] parameters = methodDetail.getMethod().getParameters();
+         //获取post请求提交的内容
+         String contentTypeStr = fullHttpRequest.headers().get(CONTENT_TYPE);
+         String contentType = contentTypeStr.split(";")[0];
+         if (StringUtils.isBlank(contentType)){
+             return null;
+         }
+         //最终调用参数列表
+         List<Object> params = new ArrayList<>();
+         //设置传入的参数实体
+         String jsonContent = fullHttpRequest.content().toString(Charsets.toCharset(CharEncoding.UTF_8));
+         methodDetail.setJson(jsonContent);
+         //如果是json格式  改造结构 在handler下设置annotation包 用作处理
+         if (StringUtils.equals(APPLICATION_JSON, contentType)){
+             for(Parameter parameter : parameters){
+                 ParameterResolver parameterResolver = ParameterResolverFactory.get(parameter);
+                 Object result = parameterResolver.resolve(methodDetail, parameter);
+                 params.add(result);
+             }
+         }
+         return ReflectionUtil.executeMethod(methodDetail.getMethod(), params.toArray());
     }
 
 }

@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * 存放方法类型的参数
+ * 参数化的地址path
  * 
  * @author Stickerleee
  * @since 2021年4月16日 下午1:50:50

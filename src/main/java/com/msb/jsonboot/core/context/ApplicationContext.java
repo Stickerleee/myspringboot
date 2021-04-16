@@ -29,43 +29,47 @@ public class ApplicationContext {
     private static final ApplicationContext APPLICATION_CONTEXT = new ApplicationContext();
     
 	/**
-     * 类路径映射 父路径：类
+     * 类路径映射 父路径：类本身
      */
     public static Map<String, Class<?>> classMapping = new HashMap<>();
 
     /**
-     * Get方法映射路径 总路径：目标方法
+     * Get方法映射路径 总路径：目标请求方法
      */
     public static Map<String, Method> getMethodMapping = new HashMap<>();
 
     /**
-     * Post方法映射 总路径：目标方法
+     * Post方法映射 总路径：目标请求方法
      */
     public static Map<String, Method> postMethodMapping = new HashMap<>();
     
     /**
-     * Get方法映射 getFormatUrl（用正则表达式替换过的Url路径）：:原url
+     * Get方法映射 用正则表达式替换过的Url路径：原url
      */
     public static Map<String, String> getUrlMapping = new HashMap<>();
 
     /**
-     * Post方法映射 postFormatUrl（用正则表达式替换过的Url路径）：原url
+     * Post方法映射 用正则表达式替换过的Url路径：原url
      */
     public static Map<String, String> postUrlMapping = new HashMap<>();
 
     /**
-     * Get方法 存放getFormatUrl : MethodDetail
+     * Get方法 用正则表达式替换过的Url路径 : MethodDetail
      */
     public static Map<String, MethodDetail> getMethodDetailMapping = new HashMap<>();
 
     /**
-     * Post方法 存放postFormatUrl : MethodDetail
+     * Post方法 用正则表达式替换过的Url路径 : MethodDetail
      */
     public static Map<String, MethodDetail> postMethodDetailMapping = new HashMap<>();
     
+    /**
+     * 路由配置初始化
+     * @param packageName 目标包名
+     */
     public void loadRoutes(String packageName) {
     	AnnotatedClassScanner annotatedScanner = new AnnotatedClassScanner();
-    	//获取扫描结果为一个包含目标注解的类的Set
+    	//扫描包含目标注解的类
     	Set<Class<?>> scan = annotatedScanner.scan(packageName, RestController.class);
     	for (Class<?> aClass : scan) {
     		RestController newController = aClass.getAnnotation(RestController.class);
@@ -82,7 +86,7 @@ public class ApplicationContext {
     }
 
 	/**
-	 * 将类中含GET和POST注解的方法导入对应的映射Map
+	 * 将类中含目标注解的方法导入对应的映射Map
 	 * 
 	 * @param baseUri 目标类的uri路径
 	 * @param methods 目标类中的方法数列
@@ -106,15 +110,16 @@ public class ApplicationContext {
 				String formatUrl = UrlUtils.formatUrl(url);
 				postMethodMapping.put(formatUrl, method);
 				postUrlMapping.put(formatUrl, url);
+				continue;
 			}
 		}
 	}
 	
     /**
-     * 获取请求对应的MethodDetail
+     * 根据请求方法参数化path
      *
      * @param requestPath 请求path 如 /user/xxx
-     * @param httpMethod 请求的方法类型 如 get、post
+     * @param httpMethod 请求的方法类型
      * @return MethodDetail
      */
     public MethodDetail getMethodDetail(String requestPath, HttpMethod httpMethod){
@@ -132,7 +137,7 @@ public class ApplicationContext {
      * 生成MethodDetail
      *
      * @param requestPath 请求路径path
-     * @param getMethodMapping 存放方法的mapping映射 formatUrl:method
+     * @param getMethodMapping formatUrl:method
      * @param getUrlMapping formatUrl:url
      * @param getMethodDetailMapping formatUrl:methodDetail
      * @return MethodDetail

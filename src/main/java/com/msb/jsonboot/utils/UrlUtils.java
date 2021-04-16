@@ -13,7 +13,7 @@ import org.apache.commons.codec.Charsets;
 import io.netty.handler.codec.http.QueryStringDecoder;
 
 /**
- * g工具类
+ * 工具类
  * 
  * @author Stickerleee
  * @since 2021年4月15日 下午3:51:30

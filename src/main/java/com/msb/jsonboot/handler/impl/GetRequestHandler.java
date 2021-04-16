@@ -1,6 +1,5 @@
 package com.msb.jsonboot.handler.impl;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,14 +9,11 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 
 import com.msb.jsonboot.utils.UrlUtils;
-import com.msb.jsonboot.utils.ObjectUtils;
 import com.msb.jsonboot.entity.MethodDetail;
 import com.msb.jsonboot.core.resolver.ParameterResolver;
 import com.msb.jsonboot.core.resolver.factory.ParameterResolverFactory;
 import com.msb.jsonboot.utils.ReflectionUtil;
-import com.msb.jsonboot.annotation.RequestParam;
 import com.msb.jsonboot.core.context.ApplicationContext;
-import com.msb.jsonboot.core.scanners.AnnotatedClassScanner;
 import com.msb.jsonboot.handler.RequestHandler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -36,18 +32,20 @@ public class GetRequestHandler implements RequestHandler {
 
 	@Override
 	public Object handler(FullHttpRequest fullHttpRequest) {
-		//解析GET请求
+		
         QueryStringDecoder queryDecoder = new QueryStringDecoder(fullHttpRequest.uri(), Charsets.toCharset(CharEncoding.UTF_8));
+        //获取请求体中的参数列表
         Map<String, String> queryParamMap = UrlUtils.getQueryParam(queryDecoder);
         String path = queryDecoder.path();
-        //获取应用唯一的实例
+        //获取应用的唯一实例及其中的Map映射
         ApplicationContext applicationContext = ApplicationContext.getInstance();
         MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.GET);
-        //若未定义目标路径，返回null
+        //若无数据或目标路径的未定义，返回null
         if (methodDetail == null || methodDetail.getMethod() == null) {
         	return null;
         }
-        log.info("request path: {}, mthod: {}", path, methodDetail.getMethod().getName());
+        log.info("request path: {}, method: {}", path, methodDetail.getMethod().getName());
+        //将GET请求体中的参数导入Detail中
         methodDetail.setQueryParameterMappings(queryParamMap);
         //通过反射获取该方法需要的参数
         Parameter[] methodParams = methodDetail.getMethod().getParameters();
@@ -57,6 +55,7 @@ public class GetRequestHandler implements RequestHandler {
         for (Parameter parameter : methodParams) {
         	ParameterResolver parameterResolver = ParameterResolverFactory.get(parameter);
             Object result = parameterResolver.resolve(methodDetail, parameter);
+            //依次导入参数值到列表中
             params.add(result);
         }
 
