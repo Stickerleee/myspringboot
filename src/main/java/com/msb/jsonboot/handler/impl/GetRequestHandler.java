@@ -11,12 +11,17 @@ import org.apache.commons.codec.Charsets;
 
 import com.msb.jsonboot.utils.UrlUtils;
 import com.msb.jsonboot.utils.ObjectUtils;
+import com.msb.jsonboot.entity.MethodDetail;
+import com.msb.jsonboot.core.resolver.ParameterResolver;
+import com.msb.jsonboot.core.resolver.factory.ParameterResolverFactory;
+import com.msb.jsonboot.utils.ReflectionUtil;
 import com.msb.jsonboot.annotation.RequestParam;
-import com.msb.jsonboot.core.route.Route;
+import com.msb.jsonboot.core.context.ApplicationContext;
 import com.msb.jsonboot.core.scanners.AnnotatedClassScanner;
 import com.msb.jsonboot.handler.RequestHandler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,36 +40,27 @@ public class GetRequestHandler implements RequestHandler {
         QueryStringDecoder queryDecoder = new QueryStringDecoder(fullHttpRequest.uri(), Charsets.toCharset(CharEncoding.UTF_8));
         Map<String, String> queryParamMap = UrlUtils.getQueryParam(queryDecoder);
         String path = queryDecoder.path();
-        //根据GET请求的路径，从路由Map中取出对应的渲染方法
-        Method method = Route.getMethodMapping.get(path);
-        if (method == null) {
+        //获取应用唯一的实例
+        ApplicationContext applicationContext = ApplicationContext.getInstance();
+        MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.GET);
+        //若未定义目标路径，返回null
+        if (methodDetail == null || methodDetail.getMethod() == null) {
         	return null;
         }
-        log.info("request path: {}, method: {}", path, method.getName());
+        log.info("request path: {}, mthod: {}", path, methodDetail.getMethod().getName());
+        methodDetail.setQueryParameterMappings(queryParamMap);
         //通过反射获取该方法需要的参数
-        Parameter[] methodParams = method.getParameters();
+        Parameter[] methodParams = methodDetail.getMethod().getParameters();
         //最终调用的参数列表
         List<Object> params = new ArrayList<>();
+        //根据注解调用对应方法
         for (Parameter parameter : methodParams) {
-        	RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
-        	//获取该参数的类型
-        	Class<?> type = parameter.getType();
-        	//最终参数的值
-        	String paramValue;
-        	//有注解时
-        	if (requestParam != null) {
-        		//将注解设置的value值作为参数的key值
-        		String paramKey = requestParam.value();
-        		//在url中取出对应的值
-        		paramValue = queryParamMap.get(paramKey);
-        	} else {
-        		//无注解时,把参数作为key值查找对应值
-        		paramValue = queryParamMap.get(parameter.getName());
-        	}
-        	params.add(ObjectUtils.convertToClass(type, paramValue));
+        	ParameterResolver parameterResolver = ParameterResolverFactory.get(parameter);
+            Object result = parameterResolver.resolve(methodDetail, parameter);
+            params.add(result);
         }
 
-        return null;
+        return ReflectionUtil.executeMethod(methodDetail.getMethod(), params.toArray());
 	}
 
 }
