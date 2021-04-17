@@ -39,6 +39,7 @@ public class GetRequestHandler implements RequestHandler {
         String path = queryDecoder.path();
         //获取应用的唯一实例及其中的Map映射
         ApplicationContext applicationContext = ApplicationContext.getInstance();
+        //TODO MethodFactory
         MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.GET);
         //若无数据或目标路径的未定义，返回null
         if (methodDetail == null || methodDetail.getMethod() == null) {

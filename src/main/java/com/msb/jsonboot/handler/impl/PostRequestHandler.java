@@ -55,6 +55,7 @@ public class PostRequestHandler implements RequestHandler {
          String path = queryDecoder.path();
          //根据映射决定参数列表的处理方法
          ApplicationContext applicationContext = ApplicationContext.getInstance();
+         //TODO MethodFactory
          MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.POST);
          if (methodDetail == null || methodDetail.getMethod() == null){
              return null;

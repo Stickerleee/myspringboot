@@ -18,7 +18,7 @@ public class JsonBootApplication {
 		banner.printBanner(null, System.out);
 		
 		ApplicationContext applicationContext = new ApplicationContext();
-		applicationContext.loadRoutes("com.msb.demo");
+		applicationContext.run("com.msb.demo");
 		
 		HttpServer httpServer = new HttpServer();
 		httpServer.run();
