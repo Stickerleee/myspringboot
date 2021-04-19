@@ -6,6 +6,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.apache.commons.lang3.StringUtils;
+
+import com.msb.jsonboot.annotation.*;
+import com.msb.jsonboot.core.ioc.BeanFactory;
+
 /**
  * 反射工具类
  * 
@@ -19,14 +24,28 @@ public class ReflectionUtil {
      * 通过反射调用方法
      * 
      * @param method 目标方法
-     * @param args   调用的参数
+     * @param args 需要调用的参数
      * @return 执行结果
      */
     public static Object executeMethod(Method method, Object... args) {
-        Object result = null;
+    	Object result = null;
         try {
-            // 生成方法对应类的对象
-            Object targetObject = method.getDeclaringClass().getDeclaredConstructor().newInstance();
+            String beanName = null;
+            Object targetObject;
+            Class<?> targetClass = method.getDeclaringClass();
+            if (targetClass.isAnnotationPresent(RestController.class)){
+                beanName = targetClass.getName();
+            }
+            if (targetClass.isAnnotationPresent(Component.class)){
+                Component component = targetClass.getAnnotation(Component.class);
+                beanName = StringUtils.isBlank(component.value()) ? targetClass.getName() : component.value();
+            }
+            if (StringUtils.isNotEmpty(beanName)){
+            	//判断是否已经生成该对象了 直接在ioc的容器中取出bean并调用
+                targetObject = BeanFactory.BEANS.get(beanName);
+            }else{
+                targetObject = method.getDeclaringClass().getDeclaredConstructor().newInstance();
+            }
             // 调用对象的方法
             result = method.invoke(targetObject, args);
         } catch (IllegalAccessException | InvocationTargetException | InstantiationException | IllegalArgumentException | NoSuchMethodException | SecurityException e) {
@@ -54,9 +73,9 @@ public class ReflectionUtil {
 
 	/**
 	 * 通过反射为Bean设置属性值
-	 * @param bean
-	 * @param field
-	 * @param targetBean
+	 * @param bean 目标对象
+	 * @param field 目标字段
+	 * @param targetBean 属性值
 	 */
 	public static void setReflectionField(Object bean, Field field, Object targetBean) {
 		try {

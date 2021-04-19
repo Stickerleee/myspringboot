@@ -12,8 +12,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
-//    @Autowired
-//    Service service;
+    @Qualifier("ActorServiceImpl")
+    @Autowired
+    Service service;
 
     @GetMapping("/hello")
     public void hello(){
@@ -22,7 +23,7 @@ public class UserController {
 
     @GetMapping(value = "/helloImpl")
     public void helloImpl(){
-//        System.out.println(service.handler());
+        System.out.println(service.handler());
     }
 
     @PostMapping("/hi")

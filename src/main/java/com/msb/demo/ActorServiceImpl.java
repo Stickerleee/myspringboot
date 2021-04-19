@@ -2,10 +2,10 @@ package com.msb.demo;
 
 import com.msb.jsonboot.annotation.Component;
 
-@Component
+@Component("ActorServiceImpl")
 public class ActorServiceImpl implements Service{
     @Override
     public String handler() {
-        return "这是接口实现，笨蛋";
+        return "这是主播实现类，笨蛋";
     }
 }
