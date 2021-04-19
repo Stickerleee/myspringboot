@@ -1,9 +1,6 @@
 package com.msb.jsonboot.server;
 
-import com.msb.jsonboot.core.scanners.AnnotatedClassScanner;
 import com.msb.jsonboot.common.SystemConstants;
-import com.msb.jsonboot.server.HttpRequestHandler;
-
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;

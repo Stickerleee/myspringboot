@@ -9,13 +9,11 @@ import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 import org.apache.commons.lang3.StringUtils;
 
-import com.msb.jsonboot.core.context.ApplicationContext;
+import com.msb.jsonboot.core.factory.MethodDetailFactory;
 import com.msb.jsonboot.core.resolver.ParameterResolver;
 import com.msb.jsonboot.core.resolver.factory.ParameterResolverFactory;
 import com.msb.jsonboot.entity.MethodDetail;
 import com.msb.jsonboot.utils.ReflectionUtil;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msb.jsonboot.handler.RequestHandler;
 import com.msb.jsonboot.utils.UrlUtils;
 
@@ -54,9 +52,7 @@ public class PostRequestHandler implements RequestHandler {
          Map<String, String> queryParamMap = UrlUtils.getQueryParam(queryDecoder);
          String path = queryDecoder.path();
          //根据映射决定参数列表的处理方法
-         ApplicationContext applicationContext = ApplicationContext.getInstance();
-         //TODO MethodFactory
-         MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.POST);
+         MethodDetail methodDetail = MethodDetailFactory.getMethodDetail(path, HttpMethod.POST);
          if (methodDetail == null || methodDetail.getMethod() == null){
              return null;
          }

@@ -1,12 +1,5 @@
-/**
- * 
- */
 package com.msb.demo.entity;
 
-/**
- * @author Stickerleee
- * @since 2021年4月16日 下午2:53:03
- */
 public class User {
     private String name;
     private Integer age;

@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import com.msb.jsonboot.core.context.ApplicationContext;
 import com.msb.jsonboot.core.factory.*;
+import com.msb.jsonboot.core.ioc.BeanFactory;
+import com.msb.jsonboot.core.ioc.DependencyInjection;
 
 /**
  * 将请求通过注解进行组合路由
@@ -41,7 +43,8 @@ public class ApplicationContext {
     public void run(String packageName) {
     	ClassFactory.loadClass(packageName);
     	RouteFactory.loadRoutes();
-    	BeanbFactory.loadBeans();
+    	BeanFactory.loadBeans();
+    	DependencyInjection.loadDependency(packageName);
     }
     
 }

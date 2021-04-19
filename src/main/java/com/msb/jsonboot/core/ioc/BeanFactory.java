@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.msb.jsonboot.core.factory;
+package com.msb.jsonboot.core.ioc;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
@@ -16,15 +16,15 @@ import com.msb.jsonboot.core.context.ApplicationContext;
 import com.msb.jsonboot.utils.ReflectionUtil;
 
 /**
- * 整合Bean为映射
+ * 整合Bean
  * 
  * @author Stickerleee
  * @since 2021年4月17日 下午1:37:12
  */
-public class BeanbFactory {
+public class BeanFactory {
 
 	/**
-	 * Bean相关的Map key=BeanName, value=标记为Bean的类
+	 * 存放Bean的Map key=BeanName, value=标记为Bean的类
 	 */
 	public static final Map<String, Object> BEANS = new ConcurrentHashMap<>(128);
 	

@@ -13,7 +13,7 @@ import com.msb.jsonboot.entity.MethodDetail;
 import com.msb.jsonboot.core.resolver.ParameterResolver;
 import com.msb.jsonboot.core.resolver.factory.ParameterResolverFactory;
 import com.msb.jsonboot.utils.ReflectionUtil;
-import com.msb.jsonboot.core.context.ApplicationContext;
+import com.msb.jsonboot.core.factory.MethodDetailFactory;
 import com.msb.jsonboot.handler.RequestHandler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -37,10 +37,8 @@ public class GetRequestHandler implements RequestHandler {
         //获取请求体中的参数列表
         Map<String, String> queryParamMap = UrlUtils.getQueryParam(queryDecoder);
         String path = queryDecoder.path();
-        //获取应用的唯一实例及其中的Map映射
-        ApplicationContext applicationContext = ApplicationContext.getInstance();
         //TODO MethodFactory
-        MethodDetail methodDetail = applicationContext.getMethodDetail(path, HttpMethod.GET);
+        MethodDetail methodDetail = MethodDetailFactory.getMethodDetail(path, HttpMethod.GET);
         //若无数据或目标路径的未定义，返回null
         if (methodDetail == null || methodDetail.getMethod() == null) {
         	return null;
