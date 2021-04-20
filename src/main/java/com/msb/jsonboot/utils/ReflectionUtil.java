@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
 
 import com.msb.jsonboot.annotation.*;
 import com.msb.jsonboot.core.ioc.BeanFactory;
@@ -85,6 +87,32 @@ public class ReflectionUtil {
             log.error("设置对象field失败");
             e.printStackTrace();
 		}
-		
 	}
+	/**
+	 * 从指定包名下获取接口的实现类
+	 * 
+	 * @param packageName 包名
+	 * @param fieldTypeClass 接口
+	 * @return 接口实现类集合
+	 */
+	public static Set<Class<?>> getSubClass(String packageName, Class<?> interfaceClass) {
+		Reflections reflections = new Reflections(packageName);
+		return reflections.getSubTypesOf((Class<Object>) interfaceClass);
+	}
+    /**
+     * 获取目标类上标注Component注解的值
+     *
+     * @param aClass 要获取注解值的类
+     * @param annotation 标注的注解
+     * @param defaultValue 默认值
+     * @return 注解标注的值
+     */
+    public static String getComponentValue(Class<?> aClass, Class<? extends Component> annotation
+                                                , String defaultValue){
+        if (!aClass.isAnnotationPresent(annotation)){
+            return defaultValue;
+        }
+        Component declaredAnnotation = aClass.getDeclaredAnnotation(annotation);
+        return StringUtils.isBlank(declaredAnnotation.value()) ? defaultValue : declaredAnnotation.value();
+    }
 }

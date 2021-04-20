@@ -7,7 +7,6 @@ import java.util.Set;
 import com.msb.jsonboot.core.context.ApplicationContext;
 import com.msb.jsonboot.core.factory.*;
 import com.msb.jsonboot.core.ioc.BeanFactory;
-import com.msb.jsonboot.core.ioc.DependencyInjection;
 
 /**
  * 将请求通过注解进行组合路由
@@ -36,15 +35,16 @@ public class ApplicationContext {
      */
     public static final Map<Class<? extends Annotation>, Set<Class<?>>> CLASSES = new HashMap<>();
     
+    public String packageName = "com.msb";
     /**
      * 对目标包进行解析
      * @param packageName
      */
     public void run(String packageName) {
+    	this.packageName = packageName;
     	ClassFactory.loadClass(packageName);
     	RouteFactory.loadRoutes();
     	BeanFactory.loadBeans();
-    	DependencyInjection.loadDependency(packageName);
     }
     
 }

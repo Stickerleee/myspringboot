@@ -60,10 +60,10 @@ public class PostRequestHandler implements RequestHandler {
          Parameter[] parameters = methodDetail.getMethod().getParameters();
          //获取post请求提交的内容
          String contentTypeStr = fullHttpRequest.headers().get(CONTENT_TYPE);
-         String contentType = contentTypeStr.split(";")[0];
-         if (StringUtils.isBlank(contentType)){
+         if (StringUtils.isBlank(contentTypeStr)){
              return null;
          }
+         String contentType = contentTypeStr.split(";")[0];
          //最终调用参数列表
          List<Object> params = new ArrayList<>();
          //设置传入的参数实体
