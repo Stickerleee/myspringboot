@@ -11,6 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 
 import com.msb.jsonboot.annotation.*;
+import com.msb.jsonboot.annotation.ioc.Component;
+import com.msb.jsonboot.annotation.springmvc.RestController;
 import com.msb.jsonboot.core.ioc.BeanFactory;
 
 /**
@@ -115,4 +117,20 @@ public class ReflectionUtil {
         Component declaredAnnotation = aClass.getDeclaredAnnotation(annotation);
         return StringUtils.isBlank(declaredAnnotation.value()) ? defaultValue : declaredAnnotation.value();
     }
+
+	/**
+	 * @param targetObject
+	 * @param targetMethod
+	 * @param args
+	 * @return
+	 */
+	public static Object executeTargetMethod(Object targetObject, Method targetMethod, Object[] args) {
+        Object result = null;
+        try {
+            result = targetMethod.invoke(targetObject, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return result;
+	}
 }

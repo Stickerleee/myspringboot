@@ -5,9 +5,9 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.msb.jsonboot.handler.RequestHandler;
-import com.msb.jsonboot.handler.impl.GetRequestHandler;
-import com.msb.jsonboot.handler.impl.PostRequestHandler;
+import com.msb.jsonboot.core.springmvc.handler.RequestHandler;
+import com.msb.jsonboot.core.springmvc.handler.impl.GetRequestHandler;
+import com.msb.jsonboot.core.springmvc.handler.impl.PostRequestHandler;
 
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;

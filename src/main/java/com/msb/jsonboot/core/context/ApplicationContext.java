@@ -5,8 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import com.msb.jsonboot.core.context.ApplicationContext;
-import com.msb.jsonboot.core.factory.*;
 import com.msb.jsonboot.core.ioc.BeanFactory;
+import com.msb.jsonboot.core.springmvc.factory.ClassFactory;
+import com.msb.jsonboot.core.springmvc.factory.RouteFactory;
 
 /**
  * 将请求通过注解进行组合路由

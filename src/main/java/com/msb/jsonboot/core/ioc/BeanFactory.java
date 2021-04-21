@@ -13,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.msb.jsonboot.annotation.Component;
-import com.msb.jsonboot.annotation.RestController;
+import com.msb.jsonboot.annotation.aop.Aspect;
+import com.msb.jsonboot.annotation.ioc.Component;
 import com.msb.jsonboot.core.context.ApplicationContext;
 import com.msb.jsonboot.utils.ReflectionUtil;
 
@@ -32,22 +32,37 @@ public class BeanFactory {
 	public static final Map<String, Object> BEANS = new ConcurrentHashMap<>(128);
 	
 	/**
-	 * 存放暂时的aop对象 二级缓存
+	 * 存放的aop对象 二级缓存
 	 */
 	public static final Map<String, Object> EARLY_BEANS = new HashMap<>(16);
+	
 	/**
-	 * 存放实例化并未初始化的基础对象 三级缓存
+	 * 存放已实例化但未初始化的基础对象 三级缓存
 	 */
 	public static final Map<String, Object> BASIC_OBJECTS = new HashMap<>(16);
+	
 	/**
 	 * 记录当前正在实例化的对象名
 	 */
 	public static final List<String> CURRENT_IN_CREATION = new LinkedList<>();
+   
 	/**
+     * 存放含 @Aspect 注解记录的类型
+     */
+    private static final Map<String, String[]> BEAN_TYPE_NAME_MAP = new ConcurrentHashMap<>(128);
+	
+    /**
 	 * 加载Bean 初始化Bean
 	 */
 	public static void loadBeans() {
 		Map<Class<? extends Annotation>, Set<Class<?>>> classes = ApplicationContext.CLASSES;
+		//初始化Aspect
+		Set<Class<?>> aspectSet = classes.get(Aspect.class);
+        BEAN_TYPE_NAME_MAP.put(Aspect.class.getName(),
+                aspectSet.stream().map(Class::getName).toArray(size -> new String[size]));
+        for (Class<?> aspectClass : aspectSet){
+            getBean(aspectClass.getName(), aspectClass);
+        }
 		//依次取出Bean
 		classes.forEach((key,value) -> {
 			for (Class<?> aClass : value) {
