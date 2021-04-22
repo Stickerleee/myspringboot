@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.reflections.Reflections;
 import com.msb.jsonboot.annotation.*;
 import com.msb.jsonboot.annotation.ioc.Component;
 import com.msb.jsonboot.annotation.springmvc.RestController;
+import com.msb.jsonboot.core.aop.lang.JoinPoint;
 import com.msb.jsonboot.core.ioc.BeanFactory;
 
 /**
@@ -132,5 +134,24 @@ public class ReflectionUtil {
             e.printStackTrace();
         }
         return result;
+	}
+
+	/**
+     * 反射调用无返回值的方法
+     *
+     * @param targetObject 执行的目标对象
+     * @param method 执行的方法
+     * @param args 执行的参数
+	 */
+	public static void executeMethodNoResult(Object aspectBean, Method method, Object ...args) {
+        try {
+            System.out.println(aspectBean);
+            System.out.println(method);
+            System.out.println(Arrays.toString(args));
+            method.invoke(aspectBean, args);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+		
 	}
 }

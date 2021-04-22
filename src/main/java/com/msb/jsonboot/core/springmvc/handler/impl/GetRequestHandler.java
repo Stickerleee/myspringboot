@@ -57,7 +57,6 @@ public class GetRequestHandler implements RequestHandler {
             //依次导入参数值到列表中
             params.add(result);
         }
-
         return ReflectionUtil.executeMethod(methodDetail.getMethod(), params.toArray());
 	}
 

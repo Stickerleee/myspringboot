@@ -12,7 +12,12 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 
 import com.msb.jsonboot.annotation.aop.*;
+import com.msb.jsonboot.core.aop.lang.*;
 import com.msb.jsonboot.entity.MethodInvocation;
+import com.msb.jsonboot.utils.PatternMatchUtil;
+import com.msb.jsonboot.utils.ReflectionUtil;
+
+import groovyjarjarantlr4.v4.runtime.misc.Utils;
 
 /**
  * AOP 实现类
@@ -68,10 +73,25 @@ public class InternallyAspectInterceptor extends Interceptor {
 		}
 	}
 
-	@Override
-	public Object intercept(MethodInvocation methodInvocation) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public boolean supports(Object bean) {
+        return pointCutUrls.stream().anyMatch(url -> PatternMatchUtil.simpleMatch(url,
+        			bean.getClass().getName())) && (!beforeMethod.isEmpty() || !afterMethod.isEmpty());
+    }
+
+
+    @Override
+    public Object intercept(MethodInvocation methodInvocation) {
+        JoinPoint joinPoint = new JoinPointImpl(aspectBean, methodInvocation.getTargetObject(), methodInvocation.getArgs());
+        beforeMethod.forEach(method -> {
+            //与调用的方法参数要一致
+            ReflectionUtil.executeMethodNoResult(aspectBean, method, joinPoint);
+        });
+        Object result = methodInvocation.proceed();
+        afterMethod.forEach(method -> {
+            ReflectionUtil.executeMethodNoResult(aspectBean, method, result, joinPoint);
+        });
+        return result;
+    }
 
 }

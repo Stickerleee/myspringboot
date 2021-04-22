@@ -68,6 +68,7 @@ public class RouteFactory {
     		Method[] methods = aClass.getMethods();
     		loadMethodRoutes(baseUri, methods);
     	}
+    	System.out.println("GET POST METHOD");
         System.out.println(getMethodMapping);
         System.out.println(postMethodMapping);
     }

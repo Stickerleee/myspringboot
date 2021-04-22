@@ -10,10 +10,10 @@ package com.msb.jsonboot.core.aop.process;
 public interface BeanPostProcessor {
 
     /**
-     * 初始化的后置处理器，在这个地方执行了aop代理
+     * 根据Aspect，对Bean进行代理的封装
      *
      * @param bean 执行初始化的目标bean
-     * @return 后置处理后的对象
+     * @return 代理包装的Bean
      */
     Object postProcessAfterInitialization(Object bean);
 
