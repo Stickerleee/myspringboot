@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.msb.demo.entity.User;
-import com.msb.jsonboot.annotation.ioc.Autowired;
-import com.msb.jsonboot.annotation.ioc.Qualifier;
-import com.msb.jsonboot.annotation.springmvc.GetMapping;
-import com.msb.jsonboot.annotation.springmvc.PathVariable;
-import com.msb.jsonboot.annotation.springmvc.PostMapping;
-import com.msb.jsonboot.annotation.springmvc.RequestBody;
-import com.msb.jsonboot.annotation.springmvc.RequestParam;
-import com.msb.jsonboot.annotation.springmvc.RestController;
+import com.msb.myspringboot.annotation.ioc.Autowired;
+import com.msb.myspringboot.annotation.ioc.Qualifier;
+import com.msb.myspringboot.annotation.springmvc.GetMapping;
+import com.msb.myspringboot.annotation.springmvc.PathVariable;
+import com.msb.myspringboot.annotation.springmvc.PostMapping;
+import com.msb.myspringboot.annotation.springmvc.RequestBody;
+import com.msb.myspringboot.annotation.springmvc.RequestParam;
+import com.msb.myspringboot.annotation.springmvc.RestController;
 
 @RestController(value = "/user")
 public class UserController {
@@ -31,9 +31,8 @@ public class UserController {
 	@GetMapping(value = "/helloImpl")
 	public void helloImpl() {
 		System.out.println("方法进来了");
-		System.out.println(service);
 		String handler = service.handler();
-		System.out.println(handler);
+		System.out.println(service);
 	}
 
 	@PostMapping("/hi")

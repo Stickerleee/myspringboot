@@ -1,6 +1,6 @@
 package com.msb.demo;
 
-import com.msb.jsonboot.annotation.ioc.Component;
+import com.msb.myspringboot.annotation.ioc.Component;
 
 @Component
 public class UserService {
